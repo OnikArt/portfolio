@@ -152,7 +152,7 @@ Keep password hashes and tokens server-only. Protect every admin API server-side
 
 ## 24. Last Known Good State
 
-Date: 2026-09-12 (Europe/Moscow). Baseline commit before this recovery pass: `4c1923c6554a81a5d67c67ccde9651263791084b`. The final recovery commit must be recorded in `AI_HANDOFF.json` after commit. Production build and the navigation smoke passed after the fix; full QA has not passed.
+Date: 2026-09-12 (Europe/Moscow). Recovery implementation commit: `babc9408786d16d94380fa3805db5cad1bfce50c` (the following documentation-only commit records this hash). Production build and the navigation smoke passed after the fix; full QA has not passed.
 
 ## 25. Instructions for Next AI
 
