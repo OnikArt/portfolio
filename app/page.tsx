@@ -5,6 +5,8 @@ import { PositioningServices } from "@/components/sections/PositioningServices";
 import { WorkCase } from "@/components/sections/WorkCase";
 import { ProcessAbout } from "@/components/sections/ProcessAbout";
 import { Contact } from "@/components/sections/Contact";
+import { Pricing } from "@/components/sections/Pricing";
+import { ChatWidget } from "@/components/chat/ChatWidget";
 
 export default function Home() {
   return (
@@ -26,10 +28,12 @@ export default function Home() {
         </section>
         <PositioningServices />
         <WorkCase />
+        <Pricing />
         <ProcessAbout />
         <Contact />
       </main>
       <Footer />
+      <ChatWidget />
     </>
   );
 }

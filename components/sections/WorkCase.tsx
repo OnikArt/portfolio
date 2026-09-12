@@ -15,6 +15,7 @@ export function WorkCase() {
       <section className="section featured-case">
         <div className="container">
           <div className="case-heading"><span>CASE / 001</span><span>SELECTED WORK</span></div>
+          <p className="project-status"><i /> В РАБОТЕ</p>
           <Reveal><h2 className="case-title">ФАСАДОФ</h2></Reveal>
           <p className="case-subtitle">Цифровая инфраструктура для бизнеса фасадов и столешниц.</p>
           <div className="case-mockup" role="img" aria-label="Место для будущих экранов проекта Фасадоф">
@@ -22,7 +23,7 @@ export function WorkCase() {
           </div>
           <div className="case-details">
             <div><span>ЗАДАЧА</span><p>Создать не просто представительский сайт, а основу цифровой системы компании.</p></div>
-            <div><span>СИСТЕМА</span><p>Каталог, управление контентом, заявки, аналитика, интеграции и production-инфраструктура.</p></div>
+            <div><span>СИСТЕМА</span><p>Brand, web, каталог, admin, backend, MAX-уведомления, social, аналитика и production-инфраструктура.</p></div>
             <div><span>РОЛЬ</span><p>Strategy · Design · Development · Infrastructure</p></div>
           </div>
           <Link className="case-link" href="/work/fasadof">Смотреть кейс <span aria-hidden="true">↗</span></Link>

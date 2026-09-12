@@ -1,0 +1,33 @@
+import { env } from "cloudflare:workers";
+
+type Row = Record<string, unknown>;
+export function database(): D1Database { const db = (env as unknown as { DB?: D1Database }).DB; if (!db) throw new Error("DATABASE_UNAVAILABLE"); return db; }
+export const id = () => crypto.randomUUID();
+export const clean = (value: unknown, max = 2000) => String(value ?? "").replace(/[<>]/g, "").trim().slice(0, max);
+export function json(data: unknown, status = 200) { return Response.json(data, { status, headers: { "Cache-Control": "no-store" } }); }
+export async function all<T extends Row>(sql: string, ...binds: unknown[]) { return (await database().prepare(sql).bind(...binds).all<T>()).results; }
+export async function one<T extends Row>(sql: string, ...binds: unknown[]) { return database().prepare(sql).bind(...binds).first<T>(); }
+export async function adminIdentity(request: Request) { const user = request.headers.get("oai-authenticated-user-id"); const email = request.headers.get("oai-authenticated-user-email"); return user && email ? { user, email } : null; }
+
+const categories: Record<string, string> = { LEAD_CREATED: "LEADS", CONVERSATION_CREATED: "CHAT", VISITOR_MESSAGE: "CHAT", ADMIN_REPLY: "CHAT", CONVERSATION_CLOSED: "CHAT", RATING_SUBMITTED: "CHAT" };
+export async function recordEvent(event: string, entityType: string, entityId: string, payload: Row, actor = "system") {
+  const safePayload = JSON.stringify(payload, (key, value) => /token|password|secret|session/i.test(key) ? undefined : value);
+  const audit = database().prepare("INSERT INTO audit_logs (id,actor,action,entity_type,entity_id,metadata) VALUES (?,?,?,?,?,?)").bind(id(), actor, event, entityType, entityId, safePayload);
+  const notificationId = id();
+  const notification = database().prepare("INSERT INTO notification_events (id,category,event,entity_type,entity_id,payload) VALUES (?,?,?,?,?,?)").bind(notificationId, categories[event] ?? entityType.toUpperCase(), event, entityType, entityId, safePayload);
+  await database().batch([audit, notification]);
+  void dispatchTelegram(notificationId, event, entityType, entityId, payload);
+}
+
+async function dispatchTelegram(notificationId: string, event: string, entityType: string, entityId: string, payload: Row) {
+  const runtime = env as unknown as { TELEGRAM_BOT_TOKEN?: string; TELEGRAM_ADMIN_CHAT_ID?: string };
+  if (!runtime.TELEGRAM_BOT_TOKEN || !runtime.TELEGRAM_ADMIN_CHAT_ID) return;
+  const text = [`[ONIKART]`, event, `${entityType}: ${entityId}`, new Date().toISOString(), ...Object.entries(payload).slice(0, 6).map(([k,v]) => `${k}: ${clean(v, 240)}`)].join("\n").slice(0, 3900);
+  try {
+    const response = await fetch(`https://api.telegram.org/bot${runtime.TELEGRAM_BOT_TOKEN}/sendMessage`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ chat_id: runtime.TELEGRAM_ADMIN_CHAT_ID, text }) });
+    if (!response.ok) throw new Error(`HTTP_${response.status}`);
+    await database().prepare("UPDATE notification_events SET status='SENT', attempts=attempts+1, sent_at=CURRENT_TIMESTAMP WHERE id=?").bind(notificationId).run();
+  } catch (error) {
+    await database().prepare("UPDATE notification_events SET status='FAILED', attempts=attempts+1, error=? WHERE id=?").bind(clean(error instanceof Error ? error.message : "SEND_FAILED", 120), notificationId).run();
+  }
+}

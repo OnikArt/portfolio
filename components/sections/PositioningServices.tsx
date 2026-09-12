@@ -21,7 +21,7 @@ export function PositioningServices() {
       <section className="section services" id="services">
         <div className="container">
           <SectionLabel>02 / ЧТО Я СОЗДАЮ</SectionLabel>
-          <Reveal><h2 className="display">ОДНА СИСТЕМА.<br /><span>ТРИ НАПРАВЛЕНИЯ.</span></h2></Reveal>
+          <Reveal><h2 className="display">ОДНА СИСТЕМА.<br /><span>ВСЕ НАПРАВЛЕНИЯ.</span></h2></Reveal>
           <div className="services__list">
             {services.map((service) => (
               <article className="service-panel" key={service.number}>
