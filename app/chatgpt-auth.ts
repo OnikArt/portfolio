@@ -1,5 +1,6 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { readAdmin } from "@/lib/admin-auth";
 
 export type ChatGPTUser = {
   userId: string;
@@ -42,10 +43,9 @@ export async function getChatGPTUser(): Promise<ChatGPTUser | null> {
 export async function requireChatGPTUser(
   returnTo: string,
 ): Promise<ChatGPTUser> {
-  const user = await getChatGPTUser();
-  if (user) return user;
-
-  redirect(chatGPTSignInPath(returnTo));
+  const user = await readAdmin();
+  if (user) return { userId: user.email, displayName: user.email, email: user.email, fullName: null };
+  redirect(`/admin/login?returnTo=${encodeURIComponent(returnTo)}`);
 }
 
 export function chatGPTSignInPath(returnTo: string): string {
