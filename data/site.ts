@@ -3,10 +3,10 @@ export const siteSettings = {
   owner: "Оник Артушян",
   location: "Воронеж / Работаю удалённо",
   availability: false,
-  contactFormEnabled: false,
+  contactFormEnabled: true,
   contactEndpoint: "",
-  contacts: [{ label: "+7 995 669-12-42", href: "tel:+79956691242" },{ label: "Telegram · @iamartush1an", href: "https://t.me/iamartush1an" }],
-  socialLinks: [{ label: "VK", href: "" },{ label: "Instagram", href: "" }],
+  contacts: [{ label: "+7 995 669-12-42", href: "tel:+79956691242" },{ label: "Telegram · @iamartush1an", href: "https://t.me/iamartush1an" },{label:"MAX · +7 995 250-77-63",href:"tel:+79952507763"}],
+  socialLinks: [{ label: "VK", href: "https://vk.ru/iamartush1an" },{ label: "Instagram", href: "https://www.instagram.com/iamartush1an" }],
 };
 
 export const services = [
