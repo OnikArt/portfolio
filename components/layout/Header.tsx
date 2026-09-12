@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
-import Link from "next/link";
 
 const links = [["Работы", "#work"], ["Услуги", "#services"], ["Подход", "#process"], ["Обо мне", "#about"]] as const;
 
@@ -22,7 +21,8 @@ export function Header() {
   }, []);
 
   useEffect(() => {
-    if (!open) return;
+    document.body.classList.toggle("menu-is-open", open);
+    if (!open) return () => document.body.classList.remove("menu-is-open");
     const previous = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     firstLinkRef.current?.focus();
@@ -30,14 +30,14 @@ export function Header() {
       if (event.key === "Escape") { setOpen(false); toggleRef.current?.focus(); }
     };
     window.addEventListener("keydown", onKeyDown);
-    return () => { document.body.style.overflow = previous; window.removeEventListener("keydown", onKeyDown); };
+    return () => { document.body.style.overflow = previous; document.body.classList.remove("menu-is-open"); window.removeEventListener("keydown", onKeyDown); };
   }, [open]);
 
   const close = () => setOpen(false);
   return (
     <header className={`header${scrolled ? " header--scrolled" : ""}${open ? " header--menu" : ""}`}>
       <div className="container header__inner">
-        <Link className="wordmark" href="/" aria-label="OnikArt — на главную">ONIKART</Link>
+        <a className="wordmark" href="/" aria-label="OnikArt — на главную">ONIKART</a>
         <nav className="nav" aria-label="Основная навигация">
           {links.map(([label, href]) => <a href={`${anchorPrefix}${href}`} key={href}>{label}</a>)}
         </nav>

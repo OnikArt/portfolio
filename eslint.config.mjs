@@ -14,6 +14,14 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
   ]),
   {
+    rules: {
+      // Vinext 1.0.0-beta.5 ships a broken production next/link chunk: its
+      // lazy RSC imports resolve to non-functions. Semantic anchors are the
+      // documented recovery fallback until that upstream runtime is fixed.
+      "@next/next/no-html-link-for-pages": "off",
+    },
+  },
+  {
     files: ["components/ui/**/*.{ts,tsx}", "hooks/use-mobile.ts"],
     rules: {
       // These files are vendored verbatim from shadcn@4.17.0. Keep the

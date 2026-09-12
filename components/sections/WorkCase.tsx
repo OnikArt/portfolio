@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { systemRows } from "@/data/site";
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionLabel } from "@/components/ui/SectionLabel";
@@ -26,7 +25,7 @@ export function WorkCase() {
             <div><span>СИСТЕМА</span><p>Brand, web, каталог, admin, backend, MAX-уведомления, social, аналитика и production-инфраструктура.</p></div>
             <div><span>РОЛЬ</span><p>Strategy · Design · Development · Infrastructure</p></div>
           </div>
-          <Link className="case-link" href="/work/fasadof">Смотреть кейс <span aria-hidden="true">↗</span></Link>
+          <a className="case-link" href="/work/fasadof">Смотреть кейс <span aria-hidden="true">↗</span></a>
         </div>
       </section>
       <section className="section case-system">

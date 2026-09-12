@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { systemRows } from "@/data/site";
@@ -47,7 +46,7 @@ export default function FasadofCase() {
           ['INFRASTRUCTURE','Production, deployment, persistent data и основа для дальнейшего развития.'],
           ['COOPERATION','После запуска работа не остановилась: добавляются функции, каналы, интеграции и инструменты бизнеса.']
         ].map(([title,copy],i)=><article key={title}><span>{String(i+1).padStart(2,'0')}</span><h2>{title}</h2><p>{copy}</p></article>)}</div></section>
-        <section className="case-next"><div className="container"><span>ДАЛЬШЕ</span><Link href="/#work">Вернуться к работам <i aria-hidden="true">↗</i></Link></div></section>
+        <section className="case-next"><div className="container"><span>ДАЛЬШЕ</span><a href="/#work">Вернуться к работам <i aria-hidden="true">↗</i></a></div></section>
       </main>
       <Footer />
     </>

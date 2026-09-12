@@ -51,6 +51,13 @@ export default defineConfig(async () => {
   const { cloudflare } = await import("@cloudflare/vite-plugin");
 
   return {
+    // Vinext beta.5 + Rolldown currently mis-mangles imported symbols in the
+    // production next/link chunk. The generated bundle then calls unrelated
+    // values as functions (RSC prefetch and navigateClientSide). Keep
+    // production chunks unminified until the upstream bundler fix lands.
+    // This preserves the framework router instead of falling back to document
+    // navigation or patching generated/node_modules files.
+    build: { minify: false },
     server: {
       ...(managedLinux ? { host: "0.0.0.0", allowedHosts: ["terminal.local"] } : {}),
       ...(isCodexSeatbeltSandbox ? { watch: { useFsEvents: false, usePolling: true } } : {}),

@@ -1,2 +1,2 @@
-import Link from "next/link";import { redirect } from "next/navigation";import { readAdmin } from "@/lib/admin-auth";import { LoginForm } from "@/components/admin/LoginForm";
-export default async function Login(){if(await readAdmin())redirect('/admin');return <main className="admin-login"><div><p className="admin-logo">ONIKART.</p><span>ADMIN SYSTEM</span><h1>Вход в систему</h1><LoginForm/><Link href="/">← Вернуться на главную</Link></div></main>}
+import { redirect } from "next/navigation";import { readAdmin } from "@/lib/admin-auth";import { LoginForm } from "@/components/admin/LoginForm";
+export default async function Login(){if(await readAdmin())redirect('/admin');return <main className="admin-login"><div><p className="admin-logo">ONIKART.</p><span>ADMIN SYSTEM</span><h1>Вход в систему</h1><LoginForm/><a href="/">← Вернуться на главную</a></div></main>}

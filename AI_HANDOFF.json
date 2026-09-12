@@ -1,0 +1,60 @@
+{
+  "project": "OnikArt public portfolio and private operations admin",
+  "stack": {
+    "vinext": "1.0.0-beta.5",
+    "next": "16.3.4",
+    "react": "19.2.6",
+    "vite": "8.0.13",
+    "typescript": "5.9.3",
+    "drizzle": "0.45.2",
+    "database": "Cloudflare D1",
+    "media": "Cloudflare R2"
+  },
+  "commands": {
+    "install": "npm ci",
+    "dev": "npm run dev",
+    "typecheck": "npx tsc --noEmit",
+    "lint": "npm run lint",
+    "test": "npm test",
+    "build": "npm run build",
+    "production": "npm run start -- --port 8788"
+  },
+  "env_names": [
+    "NODE_ENV",
+    "NEXT_PUBLIC_SITE_URL",
+    "DATABASE_URL",
+    "ADMIN_EMAIL",
+    "ADMIN_PASSWORD_HASH",
+    "ADMIN_SESSION_SECRET",
+    "TELEGRAM_BOT_TOKEN",
+    "TELEGRAM_ADMIN_CHAT_ID"
+  ],
+  "routes": ["/", "/works", "/work/fasadof", "/tariffs", "/privacy", "/health", "/api/leads", "/api/chat", "/api/weather"],
+  "admin_routes": ["/admin", "/admin/login", "/admin/leads", "/admin/dialogs", "/admin/works", "/admin/tariffs", "/admin/ratings", "/admin/analytics", "/admin/content", "/admin/notifications", "/admin/integrations", "/admin/settings", "/api/admin/dialogs", "/api/admin/messages"],
+  "critical_invariants": [
+    "Telegram failure must not rollback primary CRUD",
+    "Public and admin content must share one database source of truth",
+    "No fake metrics",
+    "Owner cannot be deleted, demoted, or disabled",
+    "Permissions are enforced server-side",
+    "No secrets client-side or in Git",
+    "Do not reintroduce next/link without production retest"
+  ],
+  "known_issues": [
+    {"priority":"P0","issue":"RBAC, team, and profile are not implemented"},
+    {"priority":"P0","issue":"Public content remains hardcoded and CRUD is incomplete"},
+    {"priority":"P0","issue":"Privacy/legal content is incomplete"},
+    {"priority":"P1","issue":"Admin chat operations and visitor live replies lack UI"},
+    {"priority":"P1","issue":"Weather city persistence UI is absent"},
+    {"priority":"P1","issue":"Full interaction, responsive, cross-browser, and security matrices are incomplete"}
+  ],
+  "checks": {
+    "react_single_runtime": "PASS",
+    "vinext_root_cause_reproduced": "PASS",
+    "production_left_click_after_fix": "PASS",
+    "production_console_after_navigation": "PASS",
+    "full_e2e": "NOT_RUN",
+    "vps_ready": "NO"
+  },
+  "last_commit": "PENDING_FINAL_COMMIT"
+}
