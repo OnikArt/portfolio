@@ -1,0 +1,16 @@
+INSERT OR IGNORE INTO services(id,number,kicker,title,slug,description,items,sort_order,is_visible) VALUES
+('service-foundation','01','DIGITAL FOUNDATION','Цифровой фундамент','digital-foundation','Фундамент продукта: позиционирование, структура, визуальная система и интерфейс.','["Структура","UI / UX","Визуальная система","Прототипирование","Контент-архитектура"]',1,1),
+('service-web','02','WEB & SYSTEMS','Веб и системы','web-systems','Сайты и внутренние инструменты, которые не заканчиваются красивой главной страницей.','["Сайты","Каталоги","Frontend","Backend","Базы данных","Админ-панели","Формы и заявки"]',2,1),
+('service-automation','03','AUTOMATION & GROWTH','Автоматизация и рост','automation-growth','Интеграции и автоматизация процессов, которые помогают системе работать после запуска.','["Аналитика","API","Интеграции","AI","Автоматизация","Production"]',3,1),
+('service-social','04','SOCIAL & CONTENT','Социальные каналы','social-content','Создание и оформление соцсетей, редизайн существующих аккаунтов, контент-система, ведение и связь с digital-экосистемой.','["Создание соцсетей","Оформление","Редизайн","Контент","Ведение","Сопровождение"]',4,1),
+('service-consulting','05','CONSULTING','Консультация','consulting','Разбор задачи, текущей цифровой системы и возможных следующих шагов.','["Digital-аудит","Аудит сайта","Бизнес-процессы","Roadmap","Выбор инструментов"]',5,1),
+('service-support','06','SUPPORT / LONG-TERM','Сопровождение и развитие','support','После запуска продолжаю развитие проекта: поддержка, новые функции, аналитика, интеграции и автоматизация.','["Поддержка","Обновления","Новые функции","Аналитика","Интеграции","Контент"]',6,1);
+
+INSERT OR IGNORE INTO tariffs(id,name,slug,eyebrow,description,price_mode,features,cta,sort_order,is_visible) VALUES
+('tariff-start','DIGITAL START','digital-start','01','Сильная digital-точка входа для небольшого бизнеса или специалиста.','FROM','["Анализ задачи","Структура и дизайн","Адаптивная разработка","Форма заявки","Базовое SEO и аналитика","Production launch"]','Обсудить проект',1,1),
+('tariff-business','BUSINESS SYSTEM','business-system','02','Для бизнеса, которому нужен не просто сайт, а рабочая система.','FROM','["Всё из Digital Start","Дополнительные страницы","Каталог и база данных","Админ-панель","Заявки и события","Интеграции"]','Обсудить проект',2,1),
+('tariff-digital','DIGITAL BUSINESS','digital-business','03','Комплексная цифровая инфраструктура бизнеса.','FROM','["Стратегия и брендинг","Website, backend и database","Custom admin и роли","Bots и automation","Social ecosystem","Production infrastructure"]','Обсудить проект',3,1),
+('tariff-support','ДАЛЬНЕЙШЕЕ СОТРУДНИЧЕСТВО','support','04','Поддержка и развитие уже запущенной системы.','INDIVIDUAL','["Техническая поддержка","Новые функции","Аналитика","Интеграции","Автоматизация","Развитие digital-системы"]','Обсудить проект',4,1);
+
+INSERT OR IGNORE INTO projects(id,title,slug,subtitle,short_description,status,published,featured,featured_order,service_tags) VALUES
+('project-fasadof','ФАСАДОФ','fasadof','Цифровая инфраструктура для бизнеса фасадов и столешниц.','Цифровая инфраструктура для бизнеса фасадов и столешниц.','IN_PROGRESS',1,1,1,'["Strategy","Design","Development","Infrastructure"]');

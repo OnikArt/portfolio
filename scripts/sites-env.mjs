@@ -1,4 +1,4 @@
-import { mkdirSync } from "node:fs";
+import { copyFileSync, existsSync, mkdirSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -13,6 +13,9 @@ process.env.WRANGLER_REGISTRY_PATH ||= path.join(runtimeRoot, "wrangler/dev-regi
 process.env.MINIFLARE_REGISTRY_PATH ||= path.join(runtimeRoot, "wrangler/registry");
 
 process.chdir(projectRoot);
+const localEnv = path.join(projectRoot, ".env.local");
+const workerDevVars = path.join(projectRoot, "dist/server/.dev.vars");
+if (existsSync(localEnv) && existsSync(path.dirname(workerDevVars))) copyFileSync(localEnv, workerDevVars);
 for (const directory of [
   path.dirname(process.env.WRANGLER_LOG_PATH),
   process.env.WRANGLER_REGISTRY_PATH,

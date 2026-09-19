@@ -118,9 +118,13 @@ Public contacts/social links live in `data/site.ts` and are rendered in Contact 
 
 Production left-click navigation was reproduced while dev worked. There was one React runtime, so duplicate React was ruled out. In Vinext beta.5's production `next/link` chunk, lazy imports from the shared navigation module resolve to non-functions: `getPrefetchInterceptionContext` fails during RSC prefetch and `navigateClientSide` fails inside `React.startTransition`. Middle-click worked because it bypassed Link's click interception and used the anchor href. The production-safe mitigation is semantic native anchors for all project navigation (an allowed upstream-bug fallback), plus unminified production output for readable stacks and protection from Rolldown symbol mangling. No generated or `node_modules` file is patched. A production left-click from home to Fasadof then navigated successfully with no new console error.
 
+The mobile hamburger previously transformed into an X below a higher-z-index fullscreen overlay, making the close control invisible. The menu now contains its own explicit, dependency-free CSS X button above the overlay content, with a 44×44 target, safe-area-aware placement, high-contrast focus state, body scroll lock, Escape/popstate handling, link auto-close, chat suppression, and focus restoration.
+
 ## 19. Testing
 
-Verified before this handoff: dependency tree contains one React/React DOM; dev framework Link reproduced no error; old production bundle reproduced exact RSC prefetch and navigation failures; fixed production build navigated by ordinary left-click to `/work/fasadof` with no new console error. Earlier checks passed 6 tests, typecheck, build, owner login, logged-out redirect, local chat persistence, Telegram direct API, and hero geometry at 1366×768, 390×844, 360×640. This is not the full requested viewport/browser/E2E matrix.
+Verified before this handoff: dependency tree contains one React/React DOM; dev framework Link reproduced no error; old production bundle reproduced exact RSC prefetch and navigation failures; fixed production build navigated by ordinary left-click to `/work/fasadof` with no new console error. Earlier checks passed 6 tests, typecheck, build, owner login, logged-out redirect, local chat persistence, Telegram direct API, and hero geometry at 1366×768, 390×844, 360×640.
+
+Mobile menu close QA on the local production build passed at 320×568, 360×640, 375×667, 390×844, 414×896, and 430×932. At every size the explicit X was visible and tappable; the 44×44 CSS touch target stayed inside the viewport; screenshots at 320 and 430 confirmed the opaque black overlay and top-right placement. Tap close, Escape close, navigation auto-close, focus return to the menu trigger, body lock/unlock, chat suppression, and horizontal containment passed. This remains narrower than the full requested browser/E2E matrix.
 
 ## 20. Production
 
@@ -157,3 +161,16 @@ Date: 2026-09-12 (Europe/Moscow). Recovery implementation commit: `babc9408786d1
 ## 25. Instructions for Next AI
 
 Before changing code: read this file; run `git status`; inspect current diffs; reproduce the target bug; make a scoped plan; preserve user changes and secrets; implement; run proportionate tests; update both handoff files with evidence; report every unresolved P0 honestly. Start with RBAC/data source, not decoration.
+
+## 26. Final pass — 2026-09-19
+
+- Hero keeps `100dvh` and now has explicit desktop compact modes through 680px height.
+- The shared process flow is a deliberate 3-column tablet grid and vertical mobile sequence.
+- Service cards have CSS window controls; the green control links to `#work-formats`. Desktop and mobile menus include «Форматы работы»; legacy `#tariffs` remains as an alias.
+- Benefits use 4 columns desktop, 2×2 tablet and one column mobile; lime display text on the light block was changed to the existing black token.
+- Fasadof system items now live in `project_blocks` as `SYSTEM_ITEM`, seeded by `drizzle/0004_fasadof_system_items.sql`. The same accessible accordion renders on home and `/work/fasadof`; the Works editor exposes `TITLE|SHORT|DETAIL` rows and saves them back to the same source.
+- Telegram notifications are formatted as short Russian human-readable messages with Moscow time and useful admin links. Duplicate `CONVERSATION_CREATED` notification on the first visitor message was removed.
+- Existing phone/Telegram/MAX/VK/Instagram assets are rendered by `ContactLink` with accessible labels.
+- Verified: `npm ci` PASS, typecheck PASS, 9/9 tests PASS, lint PASS with 3 image optimization warnings, production build PASS, production `/`, `/health` (including DB) and `/admin/login` return 200. Accordion expand and green-control anchor passed in the production browser.
+- Not verified / blockers: configured Telegram token does not match Bot API token syntax, so real `getMe` and `sendMessage` FAIL. Correct owner password is not available as plaintext, so correct-login and restart-session E2E were not run. Conventional VPS persistence is still not implemented: runtime remains D1/R2 and `DATABASE_URL` is documentation only. Contacts and several homepage/case texts still originate in `data/site.ts`, so full public/admin single-source CMS is incomplete. Full requested responsive screenshot matrix and every admin CRUD journey were not completed.
+- Therefore `VPS READY: NO`.

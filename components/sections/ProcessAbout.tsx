@@ -42,7 +42,7 @@ export function ProcessAbout() {
         <div className="container">
           <SectionLabel dark>04 / ОБО МНЕ</SectionLabel>
           <div className="about__grid">
-            <div className="portrait-placeholder" role="img" aria-label="Место для портрета Оника Артушяна"><span>OA</span></div>
+            <div className="portrait-placeholder" role="img" aria-label="Место для портрета Оника Артушяна"><img src="/images/avatar.png" alt="Оник Артушян" /></div>
             <div className="about__content">
               <Reveal><h2 className="display display--dark display--medium">ЧЕЛОВЕК<br />ЗА ONIKART.</h2></Reveal>
               <h3>Оник Артушян</h3>

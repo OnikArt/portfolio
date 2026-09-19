@@ -1,2 +1,2 @@
-import { readAdmin } from "@/lib/admin-auth";import { all,clean,json } from "@/lib/platform";
-export async function GET(request:Request){if(!await readAdmin())return json({error:'Требуется вход.'},401);const id=clean(new URL(request.url).searchParams.get('conversationId'),80);return json({messages:await all("SELECT id,sender_type AS senderType,text,created_at AS createdAt FROM messages WHERE conversation_id=? ORDER BY created_at",id)})}
+import { requirePermission } from "@/lib/admin-auth";import { all,clean,json } from "@/lib/platform";
+export async function GET(request:Request){if(!await requirePermission('dialogs.view'))return json({error:'Недостаточно прав.'},403);const id=clean(new URL(request.url).searchParams.get('conversationId'),80);return json({messages:await all("SELECT id,sender_type AS senderType,text,created_at AS createdAt FROM messages WHERE conversation_id=? ORDER BY created_at",id)})}

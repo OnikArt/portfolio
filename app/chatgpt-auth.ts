@@ -44,7 +44,7 @@ export async function requireChatGPTUser(
   returnTo: string,
 ): Promise<ChatGPTUser> {
   const user = await readAdmin();
-  if (user) return { userId: user.email, displayName: user.email, email: user.email, fullName: null };
+  if (user) return { userId: user.email, displayName: user.displayName, email: user.email, fullName: user.displayName };
   redirect(`/admin/login?returnTo=${encodeURIComponent(returnTo)}`);
 }
 

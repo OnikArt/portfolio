@@ -13,10 +13,10 @@ export const metadata: Metadata = {
     siteName: "OnikArt",
     locale: "ru_RU",
     type: "website",
-    images: [{ url: "/og.png", width: 1200, height: 630, alt: "ONIKART. Цифровые системы для бизнеса." }],
+    images: [{ url: "/images/og.png", width: 1200, height: 630, alt: "ONIKART. Цифровые системы для бизнеса." }],
   },
-  twitter: { card: "summary_large_image", title: "OnikArt — цифровые системы для бизнеса", description: "Дизайн, разработка, инфраструктура, интеграции и автоматизация.", images: ["/og.png"] },
-  icons: { icon: "/favicon.svg", shortcut: "/favicon.svg" },
+  twitter: { card: "summary_large_image", title: "OnikArt — цифровые системы для бизнеса", description: "Дизайн, разработка, инфраструктура, интеграции и автоматизация.", images: ["/images/og.png"] },
+  icons: { icon: "/images/favicon.png", shortcut: "/images/favicon.png" },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

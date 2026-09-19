@@ -4,5 +4,8 @@ test('secrets are represented only as empty env keys',()=>{const env=read('.env.
 test('lead persistence precedes notification',()=>{const source=read('app/api/leads/route.ts');assert.ok(source.indexOf('INSERT INTO leads')<source.lastIndexOf('recordEvent'))});
 test('chat persists messages and supports close and ratings',()=>{const source=read('app/api/chat/route.ts');for(const needle of ['INSERT INTO messages',"status='CLOSED'",'INSERT OR REPLACE INTO ratings'])assert.match(source,new RegExp(needle.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'))) });
 test('approved project statuses only',()=>{const schema=read('db/schema.ts');assert.match(schema,/IN_PROGRESS/);assert.doesNotMatch(schema,/ON_SUPPORT|PAUSED|PLANNED/)});
-test('telegram failure does not reject domain operation',()=>{const source=read('lib/platform.ts');assert.match(source,/void dispatchTelegram/);assert.match(source,/catch \(error\)/)});
-test('admin authorization is server-side',()=>{assert.match(read('app/admin/page.tsx'),/requireChatGPTUser/);assert.match(read('app/admin/[section]/page.tsx'),/requireChatGPTUser/)});
+test('telegram failure does not reject domain operation',()=>{const source=read('lib/platform.ts');assert.match(source,/waitUntil\(dispatchTelegram/);assert.match(source,/catch \(error\)/)});
+test('admin authorization is server-side',()=>{assert.match(read('app/admin/page.tsx'),/requireChatGPTUser/);assert.match(read('app/admin/[section]/page.tsx'),/requireAdmin/);assert.match(read('app/api/admin/resources/route.ts'),/can\(identity/)});
+test('admin cookie security follows the request scheme',()=>{assert.match(read('app/api/auth/login/route.ts'),/secureCookieFor\(request\)/);assert.doesNotMatch(read('lib/admin-auth.ts'),/secure:process\.env\.NODE_ENV/)});
+test('lead API persists a Russian E.164 phone only',()=>{const source=read('app/api/leads/route.ts');assert.match(source,/\\\+7\\d\{10\}/);assert.match(source,/bind\(leadId, name, phone,/)});
+test('all admin destinations remain reachable on mobile',()=>{const source=read('components/admin/AdminShell.tsx');assert.doesNotMatch(source,/nav\.slice/);assert.match(read('app/globals.css'),/overflow-x:auto/)});

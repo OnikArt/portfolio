@@ -8,6 +8,13 @@
       "when": 1789212558695,
       "tag": "0000_absent_moonstone",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1789776000000,
+      "tag": "0004_fasadof_system_items",
+      "breakpoints": true
     }
   ]
 }
