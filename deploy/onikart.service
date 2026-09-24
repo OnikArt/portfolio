@@ -7,10 +7,14 @@ Type=simple
 User=onikart
 WorkingDirectory=/opt/onikart/current
 EnvironmentFile=/etc/onikart/onikart.env
+Environment=HOST=127.0.0.1
+Environment=PORT=3000
 ExecStart=/usr/bin/npm run start
 Restart=always
 RestartSec=5
 NoNewPrivileges=true
+PrivateTmp=true
+ReadWritePaths=/var/lib/onikart/uploads
 
 [Install]
 WantedBy=multi-user.target

@@ -1,0 +1,3 @@
+export type RuntimeEnv = { NODE_ENV?:string; NEXT_PUBLIC_SITE_URL?:string; DATABASE_URL?:string; BLOB_READ_WRITE_TOKEN?:string; ADMIN_EMAIL?:string; ADMIN_PASSWORD_HASH?:string; ADMIN_SESSION_SECRET?:string; TELEGRAM_BOT_TOKEN?:string; TELEGRAM_ADMIN_CHAT_ID?:string };
+export function runtimeEnv():RuntimeEnv { return process.env as RuntimeEnv; }
+export function requiredDatabaseUrl():string { const value=runtimeEnv().DATABASE_URL?.trim();if(!value)throw new Error("DATABASE_URL is not configured on the server");if(!/^postgres(ql)?:\/\//i.test(value))throw new Error("DATABASE_URL must use the postgresql:// scheme");return value; }

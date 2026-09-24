@@ -1,5 +1,14 @@
 {
   "project": "OnikArt public portfolio and private operations admin",
+  "last_verified": "2026-09-22",
+  "architecture": {
+    "application": "single Vinext full-stack application",
+    "public_edge": "Vercel external rewrite proxy",
+    "runtime": "Railway Node standalone",
+    "database": "Railway PostgreSQL via DATABASE_URL",
+    "media": "Railway persistent Volume via UPLOADS_DIR",
+    "chat_transport": "4-second polling"
+  },
   "stack": {
     "vinext": "1.0.0-beta.5",
     "next": "16.3.4",
@@ -7,8 +16,7 @@
     "vite": "8.0.13",
     "typescript": "5.9.3",
     "drizzle": "0.45.2",
-    "database": "Cloudflare D1",
-    "media": "Cloudflare R2"
+    "postgres_driver": "pg 8.23"
   },
   "commands": {
     "install": "npm ci",
@@ -17,61 +25,61 @@
     "lint": "npm run lint",
     "test": "npm test",
     "build": "npm run build",
-    "production": "npm run start -- --port 8788"
+    "production": "npm run start",
+    "migrate": "npm run db:migrate",
+    "seed": "npm run db:seed",
+    "database_test": "npm run db:test"
   },
-  "env_names": [
+  "vercel_env": ["BACKEND_ORIGIN"],
+  "railway_env": [
     "NODE_ENV",
     "NEXT_PUBLIC_SITE_URL",
     "DATABASE_URL",
+    "UPLOADS_DIR",
     "ADMIN_EMAIL",
     "ADMIN_PASSWORD_HASH",
     "ADMIN_SESSION_SECRET",
     "TELEGRAM_BOT_TOKEN",
     "TELEGRAM_ADMIN_CHAT_ID"
   ],
-  "routes": ["/", "/works", "/work/fasadof", "/tariffs", "/privacy", "/health", "/api/leads", "/api/chat", "/api/weather"],
-  "admin_routes": ["/admin", "/admin/login", "/admin/leads", "/admin/dialogs", "/admin/works", "/admin/tariffs", "/admin/ratings", "/admin/analytics", "/admin/content", "/admin/notifications", "/admin/integrations", "/admin/settings", "/api/admin/dialogs", "/api/admin/messages"],
+  "deployment_files": ["vercel.mjs", "railway.json", "README_DEPLOY.md"],
   "critical_invariants": [
-    "Telegram failure must not rollback primary CRUD",
-    "Public and admin content must share one database source of truth",
-    "No fake metrics",
-    "Owner cannot be deleted, demoted, or disabled",
+    "Preserve current visual design and copy",
+    "Telegram failure never rolls back primary CRUD",
+    "Never add fake leads reviews analytics or Fasadof metrics",
+    "Owner cannot be deleted demoted or disabled",
     "Permissions are enforced server-side",
-    "No secrets client-side or in Git",
-    "Do not reintroduce next/link without production retest"
-  ],
-  "known_issues": [
-    {"priority":"P0","issue":"RBAC, team, and profile are not implemented"},
-    {"priority":"P0","issue":"Public content remains hardcoded and CRUD is incomplete"},
-    {"priority":"P0","issue":"Privacy/legal content is incomplete"},
-    {"priority":"P1","issue":"Admin chat operations and visitor live replies lack UI"},
-    {"priority":"P1","issue":"Weather city persistence UI is absent"},
-    {"priority":"P1","issue":"Full interaction, responsive, cross-browser, and security matrices are incomplete"}
+    "No secrets client-side logs reports or Git",
+    "Do not reintroduce next/link without production reproduction and retest",
+    "Do not patch generated bundles or node_modules"
   ],
   "checks": {
-    "react_single_runtime": "PASS",
-    "vinext_root_cause_reproduced": "PASS",
-    "production_left_click_after_fix": "PASS",
-    "production_console_after_navigation": "PASS",
-    "mobile_menu_close_320": "PASS",
-    "mobile_menu_close_360": "PASS",
-    "mobile_menu_close_375": "PASS",
-    "mobile_menu_close_390": "PASS",
-    "mobile_menu_close_414": "PASS",
-    "mobile_menu_close_430": "PASS",
-    "mobile_menu_tap_escape_navigation_focus": "PASS",
-    "full_e2e": "NOT_RUN",
-    "final_pass_2026_09_19": "PARTIAL",
+    "tests": "PASS_11_OF_11",
     "typecheck": "PASS",
-    "tests": "PASS_9_OF_9",
-    "lint": "PASS_WITH_3_WARNINGS",
+    "lint": "PASS_WITH_4_WARNINGS",
     "build": "PASS",
-    "production_health_db": "PASS",
-    "system_accordion": "PASS",
-    "work_formats_anchor": "PASS",
-    "telegram_real_api": "FAIL_INVALID_CONFIGURED_TOKEN_SHAPE",
-    "owner_login_e2e": "NOT_RUN_NO_PLAINTEXT_CREDENTIAL",
-    "vps_ready": "NO"
+    "postgres_migration": "PASS",
+    "postgres_seed": "PASS",
+    "postgres_crud_reconnect_cleanup": "PASS",
+    "standalone_public_routes": "PASS",
+    "standalone_health_database": "PASS",
+    "media_auth_guard": "PASS_403",
+    "media_invalid_key": "PASS_404",
+    "vercel_config_evaluation": "PASS_WITH_DISPOSABLE_ORIGIN",
+    "railway_config_parse": "PASS",
+    "live_vercel_railway_deploy": "NOT_RUN",
+    "live_cookie_auth": "NOT_RUN_NO_PLAINTEXT_CREDENTIAL",
+    "live_volume_restart_persistence": "NOT_RUN",
+    "live_telegram": "NOT_VERIFIED",
+    "backup_restore": "NOT_RUN"
   },
-  "last_commit": "babc9408786d16d94380fa3805db5cad1bfce50c"
+  "known_issues": [
+    {"priority": "P0", "issue": "Live Vercel/Railway proxy, cookie and deployment smoke tests remain"},
+    {"priority": "P0", "issue": "Railway Volume persistence and backup restore remain unverified"},
+    {"priority": "P0", "issue": "Privacy/legal content requires approval"},
+    {"priority": "P1", "issue": "CSRF, shared rate limiting, session revocation and focused IDOR matrix remain"},
+    {"priority": "P1", "issue": "Full CMS single-source parity, project preview/reorder/SEO editing are incomplete"},
+    {"priority": "P1", "issue": "Full cross-browser responsive and integration matrices are incomplete"}
+  ],
+  "production_launch": "CONDITIONAL"
 }

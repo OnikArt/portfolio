@@ -1,7 +1,8 @@
 import { clean, database, id, json, recordEvent } from "@/lib/platform";
+import { clientIp } from "@/lib/client-ip";
 const attempts = new Map<string, { count: number; reset: number }>();
 export async function POST(request: Request) {
-  const ip = request.headers.get("cf-connecting-ip") ?? "local"; const now = Date.now(); const hit = attempts.get(ip) ?? { count: 0, reset: now + 60_000 };
+  const ip = clientIp(request); const now = Date.now(); const hit = attempts.get(ip) ?? { count: 0, reset: now + 60_000 };
   if (now > hit.reset) { hit.count = 0; hit.reset = now + 60_000; } if (++hit.count > 5) return json({ error: "Слишком много попыток. Попробуйте позже." }, 429); attempts.set(ip, hit);
   const body = await request.json().catch(() => ({})) as Record<string, unknown>;
   const name = clean(body.name, 100); let digits = clean(body.phone, 30).replace(/\D/g, ""); const message = clean(body.message, 3000);

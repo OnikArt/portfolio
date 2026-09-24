@@ -1,7 +1,7 @@
 "use client";
 import { FormEvent, useState } from "react";
-import { siteSettings } from "@/data/site";
-import { ContactLink } from "@/components/ui/ContactLink";
+import { ContactIntro } from "@/components/sections/ContactIntro";
+import { sitePath } from "@/lib/deploy-target";
 
 function normalizePhone(value: string) {
   let digits = value.replace(/\D/g, "");
@@ -71,23 +71,7 @@ export function Contact() {
   return (
     <section className="contact" id="contact">
       <div className="container contact__grid">
-        <div>
-          <p className="section-label section-label--dark">ЕСТЬ ЗАДАЧА?</p>
-          <h2>
-            <span>ДАВАЙТЕ ОБСУДИМ</span>
-            <span>ВАШ ПРОЕКТ.</span>
-          </h2>
-          <p className="contact__copy">
-            {[...siteSettings.contacts, ...siteSettings.socialLinks].map(
-              (item) => (
-                <span key={item.label}>
-                  <ContactLink item={item}/>
-                  <br />
-                </span>
-              ),
-            )}
-          </p>
-        </div>
+        <ContactIntro />
         <form className="contact-form" onSubmit={submit} noValidate>
           <label>
             Имя *
@@ -122,7 +106,7 @@ export function Contact() {
           </label>
           <label className="consent">
             <input type="checkbox" required /> Согласен на обработку данных по{" "}
-            <a href="/privacy">политике конфиденциальности</a>.
+            <a href={sitePath("/privacy/")}>политике конфиденциальности</a>.
           </label>
           <button disabled={busy}>
             {busy ? "Отправляем…" : "Отправить"} <span>↗</span>

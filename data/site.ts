@@ -5,7 +5,7 @@ export const siteSettings = {
   availability: false,
   contactFormEnabled: true,
   contactEndpoint: "",
-  contacts: [{ label: "+7 995 669-12-42", href: "tel:+79956691242" },{ label: "Telegram · @iamartush1an", href: "https://t.me/iamartush1an" },{label:"MAX · +7 995 250-77-63",href:"tel:+79952507763"}],
+  contacts: [{ label: "+7 995 669-12-42", href: "tel:+79956691242" },{ label: "Telegram · @iamartush1an", href: "https://t.me/iamartush1an" },{label:"MAX · +7 995 250-77-63",href:"https://max.ru/u/f9LHodD0cOJW6yx3Pe2D9tITV0YnoLucCXH4bNTkzpTCoeBMzLvZdyOXFHg"}],
   socialLinks: [{ label: "VK", href: "https://vk.ru/iamartush1an" },{ label: "Instagram", href: "https://www.instagram.com/iamartush1an" }],
 };
 

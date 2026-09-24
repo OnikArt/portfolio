@@ -1,20 +1,10 @@
-import { all } from "@/lib/platform";
+import { getPublicServices } from "@/lib/public-content";
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 
-type Service = {
-  id: string;
-  number: string;
-  kicker: string;
-  title: string;
-  description: string;
-  items: string;
-};
 export async function PositioningServices() {
   const chain = ["БРЕНД", "САЙТ", "ЗАЯВКИ", "УПРАВЛЕНИЕ", "АНАЛИТИКА", "РОСТ"];
-  const services = await all<Service>(
-    "SELECT id,number,kicker,title,description,items FROM services WHERE is_visible=1 ORDER BY sort_order",
-  );
+  const services = await getPublicServices();
   return (
     <>
       <section className="section section--light positioning">

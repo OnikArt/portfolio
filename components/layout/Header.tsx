@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
+import { sitePath } from "@/lib/deploy-target";
 
 const links = [
   ["Работы", "#work"],
@@ -15,7 +16,7 @@ export function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
-  const anchorPrefix = pathname === "/" ? "" : "/";
+  const anchorPrefix = pathname === "/" || pathname === sitePath("/") ? "" : sitePath("/");
   const toggleRef = useRef<HTMLButtonElement>(null);
   const firstLinkRef = useRef<HTMLAnchorElement>(null);
 
@@ -59,7 +60,7 @@ export function Header() {
       className={`header${scrolled ? " header--scrolled" : ""}${open ? " header--menu" : ""}`}
     >
       <div className="container header__inner">
-        <a className="wordmark" href="/" aria-label="OnikArt — на главную">
+        <a className="wordmark" href={sitePath("/")} aria-label="OnikArt — на главную">
           ONIKART
         </a>
         <nav className="nav" aria-label="Основная навигация">

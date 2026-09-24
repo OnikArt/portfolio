@@ -1,2 +1,2 @@
 import { database } from "@/lib/platform";
-export async function GET(){let databaseStatus='unavailable';try{await database().prepare('SELECT 1').first();databaseStatus='ok'}catch{}return Response.json({status:'ok',timestamp:new Date().toISOString(),database:databaseStatus},{status:200,headers:{'cache-control':'no-store'}})}
+export async function GET(){try{await database().prepare('SELECT 1 AS ok').first();return Response.json({app:'ok',database:'ok'},{status:200,headers:{'cache-control':'no-store'}})}catch{return Response.json({app:'ok',database:'error'},{status:503,headers:{'cache-control':'no-store'}})}}

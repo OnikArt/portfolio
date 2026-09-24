@@ -1,7 +1,8 @@
-import { env, waitUntil } from "cloudflare:workers";
+import { postgresDatabase } from "@/lib/postgres";
+import { runtimeEnv } from "@/lib/runtime-env";
 
 type Row = Record<string, unknown>;
-export function database(): D1Database { const db = (env as unknown as { DB?: D1Database }).DB; if (!db) throw new Error("DATABASE_UNAVAILABLE"); return db; }
+export function database() { return postgresDatabase; }
 export const id = () => crypto.randomUUID();
 export const clean = (value: unknown, max = 2000) => String(value ?? "").replace(/[<>]/g, "").trim().slice(0, max);
 export function json(data: unknown, status = 200) { return Response.json(data, { status, headers: { "Cache-Control": "no-store" } }); }
@@ -19,7 +20,7 @@ function telegramText(event:string,entityType:string,entityId:string,payload:Row
   else if(event==='RATING_SUBMITTED'){const score=Math.max(0,Math.min(5,Number(payload.score)||0));lines.push('★'.repeat(score)+'☆'.repeat(5-score),`${score} / 5`);if(payload.comment)lines.push('',`Комментарий:\n«${clean(payload.comment,500)}»`);lines.push('',`Диалог: #${entityId.slice(0,8)}`);}
   else {const title=clean(payload.title??payload.name,160);if(title)lines.push(title,'');const fields=Array.isArray(payload.fields)?payload.fields.map(String).map(key=>fieldLabels[key]??key).slice(0,10):[];if(fields.length)lines.push('Изменено:',...fields.map(field=>`• ${field}`));}
   lines.push('',new Intl.DateTimeFormat('ru-RU',{timeZone:'Europe/Moscow',day:'2-digit',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'}).format(new Date()).replace(' в ',' · '));
-  const runtime=env as unknown as {NEXT_PUBLIC_SITE_URL?:string};const base=runtime.NEXT_PUBLIC_SITE_URL?.replace(/\/$/,'');const route=entityType==='lead'?'/admin/leads':entityType==='conversation'?'/admin/dialogs':entityType==='works'?'/admin/works':entityType==='tariffs'?'/admin/tariffs':entityType==='services'?'/admin/services':'';if(base&&route)lines.push('',`Открыть в админке: ${base}${route}`);
+  const runtime=runtimeEnv();const base=runtime.NEXT_PUBLIC_SITE_URL?.replace(/\/$/,'');const route=entityType==='lead'?'/admin/leads':entityType==='conversation'?'/admin/dialogs':entityType==='works'?'/admin/works':entityType==='tariffs'?'/admin/tariffs':entityType==='services'?'/admin/services':'';if(base&&route)lines.push('',`Открыть в админке: ${base}${route}`);
   return lines.join('\n').slice(0,3900);
 }
 export async function recordEvent(event: string, entityType: string, entityId: string, payload: Row, actor = "system") {
@@ -28,18 +29,30 @@ export async function recordEvent(event: string, entityType: string, entityId: s
   const notificationId = id();
   const notification = database().prepare("INSERT INTO notification_events (id,category,event,entity_type,entity_id,payload) VALUES (?,?,?,?,?,?)").bind(notificationId, categories[event] ?? entityType.toUpperCase(), event, entityType, entityId, safePayload);
   await database().batch([audit, notification]);
-  waitUntil(dispatchTelegram(notificationId, event, entityType, entityId, payload));
+  try { await dispatchTelegram(notificationId, event, entityType, entityId, payload); }
+  catch { console.error('Notification status update failed'); }
 }
 
 async function dispatchTelegram(notificationId: string, event: string, entityType: string, entityId: string, payload: Row) {
-  const runtime = env as unknown as { TELEGRAM_BOT_TOKEN?: string; TELEGRAM_ADMIN_CHAT_ID?: string };
-  if (!runtime.TELEGRAM_BOT_TOKEN || !runtime.TELEGRAM_ADMIN_CHAT_ID) return;
+  const runtime = runtimeEnv();
+  if (!runtime.TELEGRAM_BOT_TOKEN || !runtime.TELEGRAM_ADMIN_CHAT_ID) {
+    await database().prepare("UPDATE notification_events SET status='FAILED', error='NOT_CONFIGURED' WHERE id=?").bind(notificationId).run();
+    return;
+  }
   const text = telegramText(event,entityType,entityId,payload);
   try {
-    const response = await fetch(`https://api.telegram.org/bot${runtime.TELEGRAM_BOT_TOKEN}/sendMessage`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ chat_id: runtime.TELEGRAM_ADMIN_CHAT_ID, text }) });
+    const response = await fetch(`https://api.telegram.org/bot${runtime.TELEGRAM_BOT_TOKEN}/sendMessage`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ chat_id: runtime.TELEGRAM_ADMIN_CHAT_ID, text }), signal:AbortSignal.timeout(5000) });
     if (!response.ok) throw new Error(`HTTP_${response.status}`);
     await database().prepare("UPDATE notification_events SET status='SENT', attempts=attempts+1, sent_at=CURRENT_TIMESTAMP WHERE id=?").bind(notificationId).run();
   } catch (error) {
-    await database().prepare("UPDATE notification_events SET status='FAILED', attempts=attempts+1, error=? WHERE id=?").bind(clean(error instanceof Error ? error.message : "SEND_FAILED", 120), notificationId).run();
+    const reason=error instanceof Error&&/^HTTP_\d{3}$/.test(error.message)?error.message:error instanceof Error&&error.name==='TimeoutError'?'TIMEOUT':'SEND_FAILED';
+    await database().prepare("UPDATE notification_events SET status='FAILED', attempts=attempts+1, error=? WHERE id=?").bind(reason, notificationId).run();
   }
+}
+
+export async function recordMediaCleanupFailure(url:string,projectId:string){
+  try {
+    await database().prepare("INSERT INTO notification_events(id,category,event,entity_type,entity_id,payload,status,attempts,error) VALUES (?,?,?,?,?,?,'FAILED',1,'BLOB_DELETE_FAILED')")
+      .bind(id(),'STORAGE','MEDIA_DELETE_FAILED','works',projectId,JSON.stringify({url})).run();
+  } catch { console.error('Media cleanup failure could not be recorded'); }
 }

@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
+const publicUrl=process.env.NEXT_PUBLIC_SITE_URL;
+if(process.env.NODE_ENV==="production"&&!publicUrl)throw new Error("NEXT_PUBLIC_SITE_URL is required for production metadata");
+
 export const metadata: Metadata = {
-  metadataBase: new URL("https://onikart.dwayneclifford50004.chatgpt.site"),
+  metadataBase: new URL(publicUrl || "http://localhost:3000"),
   title: "OnikArt — цифровые системы для бизнеса",
   description: "Создание сайтов и цифровой инфраструктуры для бизнеса: дизайн, разработка, админ-панели, аналитика, интеграции и автоматизация.",
   alternates: { canonical: "/" },

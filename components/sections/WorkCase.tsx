@@ -1,12 +1,12 @@
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { SystemAccordion, type SystemItem } from "@/components/ui/SystemAccordion";
-import { all, one } from "@/lib/platform";
+import { getPublicFeaturedProject, getPublicProjectBlocks } from "@/lib/public-content";
+import { sitePath } from "@/lib/deploy-target";
 
-type Project={title:string;slug:string;short_description:string;status:string;service_tags:string};
 export async function WorkCase() {
-  const project=await one<Project>("SELECT title,slug,short_description,status,service_tags FROM projects WHERE published=1 AND featured=1 ORDER BY featured_order LIMIT 1");
-  const blocks=project?await all<{id:string;data:string}>("SELECT id,data FROM project_blocks WHERE project_id=(SELECT id FROM projects WHERE slug=?) AND type='SYSTEM_ITEM' AND visible=1 ORDER BY sort_order",project.slug):[];
+  const project=await getPublicFeaturedProject();
+  const blocks=project?await getPublicProjectBlocks(project.slug):[];
   const systemItems:SystemItem[]=blocks.map((block,index)=>{const data=JSON.parse(block.data) as {number?:string;title?:string;shortText?:string;detailText?:string};return {id:block.id,number:data.number||String(index+1).padStart(2,'0'),title:data.title||'',shortText:data.shortText,detailText:data.detailText||data.shortText||''}});
   return (
     <>
@@ -24,7 +24,7 @@ export async function WorkCase() {
           <p className="case-subtitle">{project.short_description}</p>
           <div className="case-mockup" role="img" aria-label={`Превью проекта ${project.title}`}>
             <div className="mockup-browser"><span>{project.slug.toUpperCase()} / PROJECT PREVIEW</span><div className="mockup-screen">{/* <b>{project.title}</b><small>{(JSON.parse(project.service_tags) as string[]).join(' / ')}</small>*/}
-              <img src="/images/fasadof.png" alt="" />
+              <img src={project.cover||sitePath("/images/fasadof168.png")} alt="" />
               </div></div>
           </div>
           <div className="case-details">
@@ -32,7 +32,7 @@ export async function WorkCase() {
             <div><span>СИСТЕМА</span><p>Brand, web, каталог, admin, backend, MAX-уведомления, social, аналитика и production-инфраструктура.</p></div>
             <div><span>РОЛЬ</span><p>Strategy · Design · Development · Infrastructure</p></div>
           </div>
-          <a className="case-link" href={`/work/${project.slug}`}>Смотреть кейс <span aria-hidden="true">↗</span></a>
+          <a className="case-link" href={sitePath(`/work/${project.slug}/`)}>Смотреть кейс <span aria-hidden="true">↗</span></a>
         </div>
       </section>}
       <section className="section case-system">

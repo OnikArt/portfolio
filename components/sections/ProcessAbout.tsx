@@ -1,6 +1,7 @@
 import { processSteps, technologies } from "@/data/site";
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionLabel } from "@/components/ui/SectionLabel";
+import { sitePath } from "@/lib/deploy-target";
 
 const principles = [
   ["01", "ПОНИМАНИЕ ЗАДАЧИ", "Сначала разбираю задачу бизнеса, а уже потом выбираю решение."],
@@ -42,7 +43,7 @@ export function ProcessAbout() {
         <div className="container">
           <SectionLabel dark>04 / ОБО МНЕ</SectionLabel>
           <div className="about__grid">
-            <div className="portrait-placeholder" role="img" aria-label="Место для портрета Оника Артушяна"><img src="/images/avatar.png" alt="Оник Артушян" /></div>
+            <div className="portrait-placeholder" role="img" aria-label="Место для портрета Оника Артушяна"><img src={sitePath("/images/avatar.png")} alt="Оник Артушян" /></div>
             <div className="about__content">
               <Reveal><h2 className="display display--dark display--medium">ЧЕЛОВЕК<br />ЗА ONIKART.</h2></Reveal>
               <h3>Оник Артушян</h3>
