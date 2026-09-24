@@ -42,6 +42,25 @@ if (fs.existsSync(output)) {
   fs.rmSync(output, { recursive: true });
 }
 fs.cpSync(source, output, { recursive: true });
+// Vinext's assetPrefix changes both URLs and the on-disk output path. GitHub
+// Pages already mounts this artifact at /<repo>, so remove that extra folder.
+if (base) {
+  const prefixDir = path.join(output, base.slice(1));
+  const prefixedAssets = path.join(prefixDir, "_next");
+  const rootAssets = path.join(output, "_next");
+  if (!fs.existsSync(prefixedAssets) || fs.existsSync(rootAssets)) throw new Error("Unexpected Vinext assetPrefix output layout");
+  fs.renameSync(prefixedAssets, rootAssets);
+  if (fs.readdirSync(prefixDir).length !== 0) throw new Error("Unexpected files in Vinext assetPrefix directory");
+  fs.rmdirSync(prefixDir);
+  const manifestPath = path.join(output, "vinext-client-entry-manifest.json");
+  if (fs.existsSync(manifestPath)) {
+    const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
+    const entryPrefix = `${base.slice(1)}/_next/`;
+    if (typeof manifest.appBrowserEntry !== "string" || !manifest.appBrowserEntry.startsWith(entryPrefix)) throw new Error("Unexpected Vinext client entry manifest");
+    manifest.appBrowserEntry = manifest.appBrowserEntry.slice(base.length);
+    fs.writeFileSync(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
+  }
+}
 const viteManifestDir = path.join(output, ".vite");
 if (fs.existsSync(viteManifestDir)) fs.rmSync(viteManifestDir, { recursive: true });
 fs.writeFileSync(marker, JSON.stringify({ generatedBy: "build:pages", base, origin }));
@@ -63,16 +82,19 @@ if (fs.existsSync(workRoot)) for (const entry of fs.readdirSync(workRoot)) {
   fs.copyFileSync(path.join(workRoot, entry), path.join(dir, "index.html"));
 }
 
-// Vinext emits some framework/preload URLs at origin root even when public
-// component paths already use sitePath(). Prefix only unprefixed root assets.
+// App-owned public assets already use sitePath(). Keep a narrow fallback for
+// CSS/public URLs; framework URLs are emitted by Vinext's assetPrefix.
 function patchAssets(dir) {
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
     const filename = path.join(dir, entry.name);
     if (entry.isDirectory()) patchAssets(filename);
     else if (entry.name === ".DS_Store") fs.unlinkSync(filename);
-    else if (base && /\.(html|css|js)$/.test(filename)) {
+    else if (base && /\.(html|css|js|rsc)$/.test(filename)) {
       const original = fs.readFileSync(filename, "utf8");
-      const updated = original.replace(/(?<![A-Za-z0-9._-])\/(?:_next|fonts|images|icons)\//g, match => `${base}${match}`);
+      let updated = original.replace(/(?<![A-Za-z0-9._-])\/(?:fonts|images|icons)\//g, match => `${base}${match}`);
+      // Vinext's CSS bundler resolves public/ font URLs under the framework
+      // asset directory, but these files are served from public/fonts.
+      if (filename.endsWith(".css")) updated = updated.replaceAll(`${base}/_next/static/fonts/`, `${base}/fonts/`);
       if (updated !== original) fs.writeFileSync(filename, updated);
     }
   }

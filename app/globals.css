@@ -44,6 +44,9 @@ body {
   color: var(--soft-white);
   font-family: var(--font-body);
 }
+body:has(.header) {
+  letter-spacing: 0.004em;
+}
 a {
   color: inherit;
   text-decoration: none;
@@ -198,16 +201,23 @@ textarea {
   font-family: var(--font-display);
   font-size: clamp(4.2rem, 7.5vw, 8.2rem);
   line-height: 1.1;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.018em;
 }
 .hero__title span {
   display: block;
 }
 .hero-line {
-  overflow: hidden;
+  overflow: clip;
+  overflow-clip-margin: 0.12em;
 }
 .hero-line > span {
   animation: heroLine 0.82s cubic-bezier(0.2, 0.75, 0.25, 1) both;
+}
+@media (min-width: 1600px) {
+  .hero__title {
+    font-size: 5.8rem;
+    line-height: 1.03;
+  }
 }
 .hero-line:nth-child(1) > span {
   animation-delay: 0.12s;
@@ -491,7 +501,7 @@ textarea {
   font-family: var(--font-display);
   font-size: clamp(3.5rem, 7.5vw, 7.2rem);
   line-height: 0.96;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.018em;
 }
 .display span {
   color: var(--acid-lime);
@@ -613,7 +623,7 @@ textarea {
   font-family: var(--font-display);
   font-size: clamp(2.4rem, 4.4vw, 4.8rem);
   line-height: 0.98;
-  letter-spacing: -0.018em;
+  letter-spacing: -0.016em;
   text-transform: uppercase;
 }
 .service-panel p {
@@ -1431,7 +1441,7 @@ textarea {
     font-size: clamp(3rem, 13vw, 4.2rem);
   }
   .case-title {
-    font-size: clamp(3.5rem, 17.5vw, 5.5rem);
+    font-size: clamp(3.3rem, 15.5vw, 5.5rem);
   }
   .case-subtitle {
     margin-left: 0;
@@ -1614,7 +1624,7 @@ textarea {
   font-family: var(--font-display);
   font-size: clamp(1.6rem, 3.6vw, 3.6rem);
   line-height: 0.98;
-  letter-spacing: -0.018em;
+  letter-spacing: -0.016em;
 }
 .pricing-grid p {
   color: #aaa;
@@ -2648,6 +2658,11 @@ textarea {
 }
 .pricing-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+@media (max-width: 900px) {
+  .pricing-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 .principles .display span {
   color: var(--onik-black);
